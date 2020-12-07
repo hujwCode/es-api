@@ -66,17 +66,15 @@ public class ContentService {
         }
         // 条件搜索
         SearchRequest searchRequest = new SearchRequest("jd_goods");
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-
-        // 分页
-        searchSourceBuilder.from(pageNo);
-        searchSourceBuilder.size(pageSize);
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
 
         // 精准搜索
-        TermQueryBuilder termQueryBuilder = QueryBuilders.termQuery("title", "python");
-        searchSourceBuilder.query(termQueryBuilder);
-        searchSourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
-
+        sourceBuilder.query(QueryBuilders.termQuery("title", keyword));
+        // 分页
+        sourceBuilder.from(pageNo);
+        sourceBuilder.size(pageSize);
+        sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
+        searchRequest.source(sourceBuilder);
         // 执行搜索
         SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
 
